@@ -1,12 +1,27 @@
+const express = require('express');
+const Moment = require('moment');
 const { logError } = require('./features/error');
-const { ERROR_HANDLER_TIMEOUT_CALL_MILLISECONDS } = require('./features/constants');
+const { store } = require('./features/store');
 
-for (let index = 0; index < 20; index++) {
-  logError({});
-}
+const app = express();
 
-setTimeout(() => {
-  for (let i = 0; i < 20; i++) {
-    logError({});
+app.get('/', (_, res) => {
+  try {
+    const a = null;
+    a.f();
+  } catch (error) {
+    logError(error);
   }
-}, ERROR_HANDLER_TIMEOUT_CALL_MILLISECONDS);
+  return res.status(200).json({
+    appNotifying: store.getAppNotifying(),
+    errorCount: store.getErrorsCountByDate(Moment().utc()),
+  });
+});
+
+const DEFAULT_PORT = 3000;
+
+const port = process.env.PORT || DEFAULT_PORT;
+
+app.listen(port, () => {
+  console.log(`Server is running in port ${port}`);
+});

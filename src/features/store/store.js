@@ -10,11 +10,17 @@ const store = (() => {
     errors = errors.concat([errorDate]);
   };
 
-  /** @param {import('moment').Moment} actualDate */
-  const getErrorsCountByDate = actualDate => {
-    const actualDateOneMinuteBefore = actualDate.subtract({
+  /** @param {import('moment').Moment} date */
+  const getDateInmutableWithSubstractedHandlerTimeout = date => {
+    const dateOneMinuteBefore = date.clone();
+    return dateOneMinuteBefore.subtract({
       milliseconds: ERROR_HANDLER_TIMEOUT_CALL_MILLISECONDS,
     });
+  }
+
+  /** @param {import('moment').Moment} actualDate */
+  const getErrorsCountByDate = actualDate => {
+    const actualDateOneMinuteBefore = getDateInmutableWithSubstractedHandlerTimeout(actualDate);
     return errors.filter(x => x.isSameOrAfter(actualDateOneMinuteBefore)).length;
   };
 
